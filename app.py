@@ -182,7 +182,7 @@ def quote():
         if stock_info == None:
             return apology("Stock Symbol doesn't exist",400)
         else:
-            return render_template("quoted.html", Stock = stock_info["name"], Price = stock_info["price"], Symbol=stock_info["symbol"])
+            return render_template("quoted.html", Stock = stock_info["name"], Price = usd(stock_info["price"]), Symbol=stock_info["symbol"])
 
     else:
 
