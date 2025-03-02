@@ -349,7 +349,7 @@ def buy():
     if request.method == "POST":
 
         if not request.form.get("symbol"):
-            return apology("Enter a stock symbol", 403)
+            return apology("Enter a stock symbol", 400)
         else:
             stock_info = lookup(request.form.get("symbol"))
             #try:
@@ -359,16 +359,16 @@ def buy():
             #return apology("Error during Stock Quote call", 403)
 
         if stock_info == None:
-            return apology("Stock Symbol doesn't exist",403)
+            return apology("Stock Symbol doesn't exist",400)
         elif not request.form.get("shares"):
-            return apology("Enter Quantity of Shares you want to buy", 403)
+            return apology("Enter Quantity of Shares you want to buy", 400)
         else:
             quantity = request.form.get("shares")
 
         print(f"Quantity: {quantity}")
 
         if int(quantity) < 0:
-            return apology("Only positive number of shares can be bought", 403)
+            return apology("Only positive number of shares can be bought", 400)
 
         #Lookup a stocks current price
         stock_price = stock_info["price"]
@@ -387,7 +387,7 @@ def buy():
         quantity_stock = float(quantity)
         sum_price_quantity = price_stock * quantity_stock
         if sum_price_quantity > float(amount_cash[0]["cash"]):
-            return apology("You can not afford the number of shares", 403)
+            return apology("You can not afford the number of shares", 400)
         else:
             try:
                 id = db.execute(
@@ -395,7 +395,7 @@ def buy():
                 )
             except Exception as e:
                 print(f"An error occurred, when inserting the buy transaction: {e}")
-                return apology("Something went wrong, while inserting the buy transaction",403)
+                return apology("Something went wrong, while inserting the buy transaction",400)
 
         #Update the users cash - first get the cash
         # Query database for username
@@ -405,7 +405,7 @@ def buy():
                 )
         except Exception as e:
             print(f"An error occurred, when selecting cash from user: {e}")
-            return apology("Something went wrong, when selecting cash from user",403)
+            return apology("Something went wrong, when selecting cash from user",400)
 
         #Calculate the new value
         new_value = float(cash[0]["cash"]) - sum_price_quantity
@@ -416,7 +416,7 @@ def buy():
             )
         except Exception as e:
             print(f"An error occurred, when inserting the buy transaction: {e}")
-            return apology("Something went wrong, while inserting the buy transaction",403)
+            return apology("Something went wrong, while inserting the buy transaction",400)
 
         # Redirect user to home page
         return redirect("/")
