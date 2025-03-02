@@ -170,7 +170,7 @@ def quote():
     if request.method == "POST":
 
         if not request.form.get("symbol"):
-            return apology("Enter a stock symbol", 403)
+            return apology("Enter a stock symbol", 400)
         else:
             stock_info = lookup(request.form.get("symbol"))
             #try:
@@ -180,7 +180,7 @@ def quote():
             #return apology("Error during Stock Quote call", 403)
 
         if stock_info == None:
-            return apology("Stock Symbol doesn't exist",403)
+            return apology("Stock Symbol doesn't exist",400)
         else:
             return render_template("quoted.html", Stock = stock_info["name"], Price = stock_info["price"], Symbol=stock_info["symbol"])
 
@@ -197,13 +197,13 @@ def register():
     if request.method == "POST":
         # Ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username", 403)
+            return apology("must provide username", 400)
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password", 403)
+            return apology("must provide password", 400)
         # Ensure password confirmation matches
         elif not (request.form.get("password") == request.form.get("confirmation")):
-            return apology("password confirmation doesn't match", 403)
+            return apology("password confirmation doesn't match", 400)
 
         # Query database for username
 
@@ -214,7 +214,7 @@ def register():
             )
         except Exception as e:
             print(f"An error occurred, when inserting username and password: {e}")
-            return apology("Duplicate username", 403)
+            return apology("Duplicate username", 400)
 
 
         # Ensure username exists and password is correct
