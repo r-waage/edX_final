@@ -412,7 +412,7 @@ def buy():
 
         try:
             id = db.execute(
-                "UPDATE users SET cash = ? WHERE id = ?", new_value, id_usr
+                "UPDATE users SET cash = ? WHERE id = ?", usd(new_value), id_usr
             )
         except Exception as e:
             print(f"An error occurred, when inserting the buy transaction: {e}")
