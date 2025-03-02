@@ -391,7 +391,7 @@ def buy():
         else:
             try:
                 id = db.execute(
-                    "INSERT INTO buy_sell_stocks (user_id, action, stock, price, quantity, date) VALUES (?,?,?,?,?,?)", id_usr, "buy", stock_info["symbol"], usd(price_stock), quantity_stock, datetime.now()
+                    "INSERT INTO buy_sell_stocks (user_id, action, stock, price, quantity, date) VALUES (?,?,?,?,?,?)", id_usr, "buy", stock_info["symbol"], price_stock, quantity_stock, datetime.now()
                 )
             except Exception as e:
                 print(f"An error occurred, when inserting the buy transaction: {e}")
