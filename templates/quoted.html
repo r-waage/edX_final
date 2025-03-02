@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quotes
+{% endblock %}
+
+{% block main %}
+    <!-- <p><h3>Stock Name: {{Stock}}</h3></p>
+    <p><h4>Price: {{Price}}</h4></p>
+    <p><h4>Symbol: {{Symbol}}</h4></p> -->
+
+    <div class="section">
+        <p>
+            <h3>Stock's Current Price': </h3>
+            <table align="center">
+                <thead>
+                    <tr>
+                        <th>Stock Quote</th>
+                        <th>Symbol</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- TODO: Loop through the database entries to display them in this table -->
+                        <tr>
+                            <td> {{Stock}}</td>
+                            <td> ({{Symbol}}) </td>
+                            <td> {{Price}} </td>
+                        </tr>
+                </tbody>
+            </table>
+        </p>
+    </div>
+{% endblock %}

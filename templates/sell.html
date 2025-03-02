@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Input Stock Symbol and Quantity to Sell
+{% endblock %}
+
+{% block main %}
+    <form action="/sell" method="post">
+        <div class="mb-3">
+            <SELECT name="symbol" class="form-select mx-auto w-auto mb-3" autofocus>
+                {% for stocks in list %}
+                    <OPTION value={{stocks}}>{{stocks}}</OPTION>
+                {% endfor %}
+            </SELECT>
+            <!-- <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="symbol" placeholder="Stock Symbol to Buy" type="text"> -->
+        </div>
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="shares" placeholder="Quantity of Shares" type="number">
+        </div>
+        <button class="btn btn-primary" type="submit">Sell Stock</button>
+    </form>
+{% endblock %}
