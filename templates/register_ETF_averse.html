@@ -1,0 +1,21 @@
+{% extends "layout_ETF.html" %}
+
+{% block title %}
+    Register with User and Password as Risk Averse
+{% endblock %}
+
+{% block main %}
+<p class="h5 mb-3">Register with your Username and Password as Risk Averse</p>
+    <form action="/register_averse" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username" placeholder="Username" type="text">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="confirmation" placeholder="Confirmation" type="password">
+        </div>
+        <button class="btn btn-primary" type="submit">Register</button>
+    </form>
+{% endblock %}
