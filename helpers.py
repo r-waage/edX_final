@@ -1,4 +1,5 @@
 import requests
+import yfinance as yf
 
 from flask import redirect, render_template, session
 from functools import wraps
@@ -55,6 +56,21 @@ def lookup(symbol):
         return {
             "name": quote_data["companyName"],
             "price": quote_data["latestPrice"],
+            "symbol": symbol.upper()
+        }
+    except requests.RequestException as e:
+        print(f"Request error: {e}")
+    except (KeyError, ValueError) as e:
+        print(f"Data parsing error: {e}")
+    return None
+
+def lookup_yf(symbol):
+    """Look up quote for symbol."""
+    ticker_yf = yf.Ticker(symbol)
+    try:
+        return {
+            "name": ticker_yf.info['shortName'],
+            "price": ticker_yf.info['regularMarketOpen'],
             "symbol": symbol.upper()
         }
     except requests.RequestException as e:

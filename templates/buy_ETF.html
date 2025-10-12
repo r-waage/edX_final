@@ -1,0 +1,26 @@
+{% extends "layout_ETF.html" %}
+
+{% block title %}
+    Input Stock Symbol and Quantity to Buy
+{% endblock %}
+
+{% block main %}
+    <form action="/buy" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="symbol" placeholder="Stock Symbol to Buy" type="text">
+        </div>
+         <div class="mb-3">
+            <select class="form-select mx-auto w-auto" name="risky">
+                <option selected>Choose Riskiness </option> 
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+            <!-- <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="risk_type" placeholder="risk_seeking" type="text"> -->
+        </div>
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="shares" placeholder="Quantity of Shares" type="number">
+        </div>
+        <button class="btn btn-primary" type="submit">Buy Stock</button>
+    </form>
+{% endblock %}

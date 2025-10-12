@@ -1,0 +1,142 @@
+{% extends "layout_ETF.html" %}
+
+{% block title %}
+    Stock Overview
+{% endblock %}
+
+{% block main %}
+    <!-- <p><h3>Stock Name: {{Stock}}</h3></p>
+    <p><h4>Price: {{Price}}</h4></p>
+    <p><h4>Symbol: {{Symbol}}</h4></p> -->
+    <!-- align="center"-->
+
+    <div class="section">
+        <p>
+            <h3>ETF Postion at Current Price in $: </h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Stock Symbol</th>
+                        <th>Quantity</th>
+                        <th>Risk</th>
+                        <th>Current Price $</th>
+                        <th>Avg Cost $</th>
+                        <th>Total Cost $</th>
+                        <th>Current Value $</th>
+                        <th>Unreal. PnL $</th>
+                        <th>Real. PnL $</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- TODO: Loop through the database entries to display them in this table -->
+                     {% for stock in list %}
+                        <tr>
+                            <td> {{stock.Stock}}</td>
+                            <td> ({{stock.Quantity}}) </td>
+                            <td> ({{stock.Risk}}) </td>
+                            <td> {{stock.Curr_Price}} </td>
+                            <td> {{stock.Avg_Cost}} </td>
+                            <td> {{stock.Total_Cost}} </td>
+                            <td> {{stock.Total_Value}} </td>
+                            <td> {{stock.Unrealized_PnL}} </td>
+                            <td> {{stock.Realized_PnL}} </td>
+                        </tr>
+                     {% endfor %}
+                </tbody>
+            </table>
+        </p>
+    </div>
+
+
+    <div class="section">
+        <p>
+            <h3>Risk Positions in $ and Percentage %: </h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Low Risk Pos $</th>
+                        <th>Medium Risk Pos $</th>
+                        <th>High Risk Pos $</th>
+                        <th>Overall Low Pos %</th>
+                        <th>Overall Med Pos %</th>
+                        <th>Overall High Pos %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td> {{low_value}}</td>
+                            <td> {{med_value}}</td>
+                            <td> {{high_value}}</td>
+                            <td> {{low_perc}}</td>
+                            <td> {{med_perc}}</td>
+                            <td> {{high_perc}}</td>
+
+                        </tr>
+                </tbody>
+            </table>
+        </p>
+
+
+        {% if risk_lev == "risk_averse_breach" %}
+            <div class="container d-flex justify-content-center">
+                <div class="w-100" style="max-width: 800px;">
+                    <div class="alert alert-danger" role="alert">
+                        The Risk Appetite of 30% LOW Risk Assets and 70% HIGH Risk Assets has been breached!
+                    </div>
+                </div>
+            
+            </div>
+        {% elif risk_lev == "balanced" %}
+            <div class="container d-flex justify-content-center">
+                <div class="w-100" style="max-width: 800px;">
+                    <div class="alert alert-danger" role="alert">
+                        The Risk Appetite of 50%/50% split for Risky vs Low Risk Assets has been breached!
+                    </div>
+                </div>
+            
+            </div>
+        {% elif risk_lev == "risk_seeking_breach" %}
+            <div class="container d-flex justify-content-center">
+                <div class="w-100" style="max-width: 800px;">
+                    <div class="alert alert-danger" role="alert">
+                        The Risk Appetite of 70% HIGH Risk Assets and 30% LOW Risk Assets has been breached!
+                    </div>
+                </div>
+            
+            </div>
+        
+        {% endif %} 
+
+    </div>
+
+    <div class="section">
+        <p>
+            <h3>ETF Transactions at Cost in $: </h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Stock Symbol</th>
+                        <th>Action</th>
+                        <th>Date</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Costs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- TODO: Loop through the database entries to display them in this table -->
+                     {% for trans in list2 %}
+                        <tr>
+                            <td> {{trans.Stock}}</td>
+                            <td> ({{trans.Action}}) </td>
+                            <td> {{trans.Date}} </td>
+                            <td> {{trans.Quantity}} </td>
+                            <td> {{trans.Price}} </td>
+                            <td> {{trans.Costs}} </td>
+                        </tr>
+                     {% endfor %}
+                </tbody>
+            </table>
+        </p>
+    </div>
+{% endblock %}
