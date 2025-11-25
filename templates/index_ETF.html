@@ -1,7 +1,7 @@
 {% extends "layout_ETF.html" %}
 
 {% block title %}
-    Stock Overview
+    Position Overview
 {% endblock %}
 
 {% block main %}
@@ -17,7 +17,7 @@
                 <thead>
                     <tr>
                         <th>Stock Symbol</th>
-                        <th>Quantity</th>
+                        <th>Open Quantity</th>
                         <th>Risk</th>
                         <th>Current Price $</th>
                         <th>Avg Cost $</th>
@@ -32,7 +32,7 @@
                      {% for stock in list %}
                         <tr>
                             <td> {{stock.Stock}}</td>
-                            <td> ({{stock.Quantity}}) </td>
+                            <td> {{stock.Quantity}} </td>
                             <td> ({{stock.Risk}}) </td>
                             <td> {{stock.Curr_Price}} </td>
                             <td> {{stock.Avg_Cost}} </td>
@@ -79,18 +79,22 @@
 
         {% if risk_lev == "risk_averse_breach" %}
             <div class="container d-flex justify-content-center">
-                <div class="w-100" style="max-width: 800px;">
+                <div class="w-100" style="max-width: 900px;">
                     <div class="alert alert-danger" role="alert">
-                        The Risk Appetite of 30% LOW Risk Assets and 70% HIGH Risk Assets has been breached!
+                        The Risk Appetite of 70% LOW Risk Assets and 30% HIGH Risk Assets has been breached! </br>
+                        Values should be - LOW Risk Position: {{theo_low}} and HIGH Risk Position: {{theo_high}}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 </div>
             
             </div>
-        {% elif risk_lev == "balanced" %}
+        {% elif risk_lev == "risk_balanced_breach" %}
             <div class="container d-flex justify-content-center">
                 <div class="w-100" style="max-width: 800px;">
                     <div class="alert alert-danger" role="alert">
-                        The Risk Appetite of 50%/50% split for Risky vs Low Risk Assets has been breached!
+                        The Risk Appetite of 50%/50% split for Risky vs Low Risk Assets has been breached! </br>
+                        Values should be - LOW Risk Position: {{theo_low}} and HIGH Risk Position: {{theo_high}}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 </div>
             
@@ -98,11 +102,12 @@
         {% elif risk_lev == "risk_seeking_breach" %}
             <div class="container d-flex justify-content-center">
                 <div class="w-100" style="max-width: 800px;">
-                    <div class="alert alert-danger" role="alert">
-                        The Risk Appetite of 70% HIGH Risk Assets and 30% LOW Risk Assets has been breached!
+                    <div class="alert alert-danger alert-dismissible">
+                        The Risk Appetite of 70% HIGH Risk Assets and 30% LOW Risk Assets has been breached! </br>
+                        Values should be - LOW Risk Position: {{theo_low}} and HIGH Risk Position: {{theo_high}}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                </div>
-            
+                </div>        
             </div>
         
         {% endif %} 

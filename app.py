@@ -92,7 +92,7 @@ def register_averse():
         try:
             id = db.execute(
             #"SELECT * FROM users WHERE username = ?", request.form.get("username")
-            "INSERT INTO  users (username, risk_type, hash) VALUES(?,?,?)", request.form.get("username"), "risk_averse", generate_password_hash(request.form.get("password"))
+            "INSERT INTO  users (username, risk_type, hash, cash) VALUES(?,?,?,?)", request.form.get("username"), "risk_averse", generate_password_hash(request.form.get("password")),0.0
             )
         except Exception as e:
             print(f"An error occurred, when inserting username and password: {e}")
@@ -137,7 +137,7 @@ def register_balanced():
         try:
             id = db.execute(
             #"SELECT * FROM users WHERE username = ?", request.form.get("username")
-            "INSERT INTO  users (username, risk_type, hash) VALUES(?,?,?)", request.form.get("username"), "balanced", generate_password_hash(request.form.get("password"))
+            "INSERT INTO  users (username, risk_type, hash, cash) VALUES(?,?,?,?)", request.form.get("username"), "balanced", generate_password_hash(request.form.get("password")),0.0
             )
         except Exception as e:
             print(f"An error occurred, when inserting username and password: {e}")
@@ -182,7 +182,7 @@ def register_seeking():
         try:
             id = db.execute(
             #"SELECT * FROM users WHERE username = ?", request.form.get("username")
-            "INSERT INTO  users (username, risk_type, hash) VALUES(?,?,?)", request.form.get("username"), "risk_seeking", generate_password_hash(request.form.get("password"))
+            "INSERT INTO  users (username, risk_type, hash, cash) VALUES(?,?,?,?)", request.form.get("username"), "risk_seeking", generate_password_hash(request.form.get("password")),0.0
             )
         except Exception as e:
             print(f"An error occurred, when inserting username and password: {e}")
@@ -333,7 +333,7 @@ def index():
                 sell_price = sell_price + price * quant
 
         available_quantity = float(buy_quantity - sell_quantity)
-        print(f"avail_quant: {available_quantity}")
+        #print(f"avail_quant: {available_quantity}")
         #########################################################
 
         #Total value of stock holdings
@@ -367,12 +367,20 @@ def index():
         elif stock_risk == "high":
             high_curr_value = high_curr_value + total_stock_holding
     
+    total_curr_value = low_curr_value + med_curr_value + high_curr_value
+    
     #Set the percentage for the risk position at current price
-    perc_low = round(low_curr_value/(low_curr_value+med_curr_value+high_curr_value)*100,2)
-    perc_med = round(med_curr_value/(low_curr_value+med_curr_value+high_curr_value)*100,2)
-    perc_high = round(high_curr_value/(low_curr_value+med_curr_value+high_curr_value)*100,2)
+    if (total_curr_value > 0):
+        perc_low = round(low_curr_value/(total_curr_value)*100,2)
+        perc_med = round(med_curr_value/(total_curr_value)*100,2)
+        perc_high = round(high_curr_value/(total_curr_value)*100,2)
+    else:
+        perc_low = 0
+        perc_med = 0
+        perc_high = 0
 
-    #How much do you have to sell to arrive at the 70 / 30 split
+
+
 
     risk_level = "none"
     for risk in usr_risk_level:
@@ -380,13 +388,24 @@ def index():
     
     print(f"The risk levle is {risk_level}")
 
-    #There is a tolerance, therefore the number are not exactly 30,70,50
-    if (risk_level == "risk_averse") and perc_low < 67 and perc_high > 33:
+    theo_low_curr_value = 0.0
+    theo_med_curr_value = 0.0
+    theo_high_curr_value = 0.0
+    ##Breach of the 70/30, 50/50 or 30/70 rule with a tolerance, theoretical value when obeyign the rule
+    if (risk_level == "risk_averse") and ((perc_low < 65 and perc_high > 35) or (perc_low > 75 and perc_high < 25)):
         risk_level = "risk_averse_breach"
-    elif (risk_level == "risk_seeking") and perc_low > 33 and perc_high < 67:
+        theo_low_curr_value = round(total_curr_value * 0.7,2)
+        theo_high_curr_value = round(total_curr_value * 0.3,2)
+    elif (risk_level == "risk_seeking") and ((perc_low > 35 and perc_high < 65) or (perc_low < 25 and perc_high > 75)):
         risk_level = "risk_seeking_breach"
-    elif (risk_level == "risk_balanced") and (perc_high > 54 or perc_high < 46):
+        theo_low_curr_value = round(total_curr_value * 0.3,2)
+        theo_high_curr_value = round(total_curr_value * 0.7,2)
+    elif (risk_level == "risk_balanced") and ((perc_low > 55 or perc_high < 45) or (perc_low < 45 and perc_high >55)):
         risk_level = "risk_balanced_breach"
+        theo_low_curr_value = round(total_curr_value * 0.5,2)
+        theo_high_curr_value = round(total_curr_value * 0.5,2)
+    #####################################################################
+
 
 
 
@@ -398,7 +417,7 @@ def index():
         trans_dict.append(dict)
 
 
-    return render_template("index_ETF.html", list = list_dict_stocks, list2 = trans_dict, risk_lev = risk_level, low_value=usd(low_curr_value), med_value=usd(med_curr_value), high_value=usd(high_curr_value), low_perc = perc_low, med_perc = perc_med, high_perc = perc_high )
+    return render_template("index_ETF.html", list = list_dict_stocks, list2 = trans_dict, risk_lev = risk_level, theo_low = theo_low_curr_value, theo_high = theo_high_curr_value, low_value=usd(low_curr_value), med_value=usd(med_curr_value), high_value=usd(high_curr_value), low_perc = perc_low, med_perc = perc_med, high_perc = perc_high )
 
 
 
@@ -508,37 +527,37 @@ def buy():
         price_stock = float(stock_price)
         quantity_stock = float(quantity)
         sum_price_quantity = price_stock * quantity_stock
-        if sum_price_quantity > float(amount_cash[0]["cash"]):
-            return apology("You can not afford the number of shares", 400)
-        else:
-            try:
-                id = db.execute(
-                    "INSERT INTO buy_sell_stocks (user_id, action, stock, price, quantity, risky, date) VALUES (?,?,?,?,?,?,?)", id_usr, "buy", stock_info["symbol"], price_stock, quantity_stock, risky, datetime.utcnow()
-                )
-            except Exception as e:
-                print(f"An error occurred, when inserting the buy transaction: {e}")
-                return apology("Something went wrong, while inserting the buy transaction",400)
-
-        #Update the users cash - first get the cash
-        # Query database for username
-        try:
-            cash = db.execute(
-                "SELECT cash FROM users WHERE id = ?", id_usr
-                )
-        except Exception as e:
-            print(f"An error occurred, when selecting cash from user: {e}")
-            return apology("Something went wrong, when selecting cash from user",400)
-
-        #Calculate the new value
-        new_value = float(cash[0]["cash"]) - sum_price_quantity
-
+        #if sum_price_quantity > float(amount_cash[0]["cash"]):
+            #return apology("You can not afford the number of shares", 400)
+        #else:
         try:
             id = db.execute(
-                "UPDATE users SET cash = ? WHERE id = ?", new_value, id_usr
+                "INSERT INTO buy_sell_stocks (user_id, action, stock, price, quantity, risky, date) VALUES (?,?,?,?,?,?,?)", id_usr, "buy", stock_info["symbol"], price_stock, quantity_stock, risky, datetime.utcnow()
             )
         except Exception as e:
             print(f"An error occurred, when inserting the buy transaction: {e}")
             return apology("Something went wrong, while inserting the buy transaction",400)
+
+        #Update the users cash - first get the cash
+        # Query database for username
+        # try:
+        #     cash = db.execute(
+        #         "SELECT cash FROM users WHERE id = ?", id_usr
+        #         )
+        # except Exception as e:
+        #     print(f"An error occurred, when selecting cash from user: {e}")
+        #     return apology("Something went wrong, when selecting cash from user",400)
+
+        # #Calculate the new value
+        # new_value = float(cash[0]["cash"]) - sum_price_quantity
+
+        # try:
+        #     id = db.execute(
+        #         "UPDATE users SET cash = ? WHERE id = ?", new_value, id_usr
+        #     )
+        # except Exception as e:
+        #     print(f"An error occurred, when inserting the buy transaction: {e}")
+        #     return apology("Something went wrong, while inserting the buy transaction",400)
 
         # Redirect user to home page
         return redirect("/index")
