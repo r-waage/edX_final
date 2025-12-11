@@ -240,14 +240,14 @@ def login():
         session["user_id"] = rows[0]["id"]
 
         # Redirect user to home page
-        return redirect("/index")
+        return redirect("/position")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
 
 
-@app.route("/index")
+@app.route("/position")
 @login_required
 def index():
 
@@ -473,7 +473,7 @@ def cash():
             return apology("Something went wrong, while inserting the buy transaction",403)
 
         # Redirect user to home page
-        return redirect("/index")
+        return redirect("/position")
 
     else:
 
@@ -560,7 +560,7 @@ def buy():
         #     return apology("Something went wrong, while inserting the buy transaction",400)
 
         # Redirect user to home page
-        return redirect("/index")
+        return redirect("/position")
 
             #return render_template("quoted.html", Stock = stock_info["name"], Price = stock_info["price"], Symbol=stock_info["symbol"])
     else:
@@ -631,7 +631,7 @@ def sell():
             return apology("The quantity of stocks is not available",403)
 
         # Redirect user to home page
-        return redirect("/index")
+        return redirect("/position")
 
     else:
         #Populate the SELECT list in html
